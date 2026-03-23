@@ -1,5 +1,8 @@
+import { send, setErrmsg } from "../../helper/responsehelper.js";
+import { RESPONSE } from "../../config/global.js";
 import { Router } from "express";
 import initusermodel from "../../model/user.js";
+
 const route = Router();
 route.delete("/:id", async (req, res) => {
   try {
@@ -11,7 +14,7 @@ route.delete("/:id", async (req, res) => {
     if (deleted) {
       res.send("User Deleted Successfully");
     } else {
-      res.status(404).send("User Not Found");
+      return send(res, setErrmsg("User Not Found"));
     }
   } catch (error) {
     res.status(500).send(error.message);

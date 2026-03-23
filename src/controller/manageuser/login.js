@@ -1,3 +1,5 @@
+import { send, setErrmsg } from "../../helper/responsehelper.js";
+import { RESPONSE } from "../../config/global.js";
 import { Router } from "express";
 import initUserModel from "../../model/user.js";
 import bcrypt from "bcrypt";
@@ -12,9 +14,10 @@ router.post("/", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-      });
+      return send(
+        res,
+        setErrmsg(RESPONSE.ERROR, "Email and password are required"),
+      );
     }
 
     const User = await initUserModel();
@@ -24,28 +27,23 @@ router.post("/", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({
-        message: "User not found",
-      });
+      return send(
+        res,
+        setErrmsg(RESPONSE.ERROR, "Email and password are required"),
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({
-        message: "Invalid password",
-      });
+      return send(res, setErrmsg(RESPONSE.ERROR, "Invalid password"));
     }
-
-    return res.status(200).json({
-      message: "Login successful",
-    });  
+    const userData = user.toJSON();
+    delete userData.password;
+    return send(res, RESPONSE.SUCCESS, "Login Successful");
   } catch (error) {
-    console.error("LOGIN ERROR:", error); 
-
-    return res.status(500).json({
-      message: error.message,
-    });
+    console.error("LOGIN ERROR:", error);
+    return send(res, setErrmsg(RESPONSE.ERROR, error.message));
   }
 });
 

@@ -1,3 +1,5 @@
+import { send, setErrmsg } from "../../helper/responsehelper.js";
+import { RESPONSE } from "../../config/global.js";
 import { Router } from "express";
 import initUserModel from "../../model/user.js";
 import bcrypt from "bcrypt";
@@ -12,9 +14,7 @@ router.post("/", async (req, res) => {
     const { name, email, password, phone, age, gender, address } = req.body;
 
     if (!name || !email || !password || !phone || !age || !gender || !address) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
+      return send(res, setErrmsg(RESPONSE.REQUIRED, "All fields are required"));
     }
 
     const User = await initUserModel();
@@ -24,9 +24,7 @@ router.post("/", async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({
-        message: "User already exists",
-      });
+      return send(res, setErrmsg(RESPONSE.ERROR, "User already exists"));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,17 +38,11 @@ router.post("/", async (req, res) => {
       gender,
       address,
     });
-
-    return res.status(201).json({
-      message: "User registered successfully",
-      data: newUser,
-    });
+    return send(res, RESPONSE.SUCCESS, newUser);
   } catch (error) {
     console.error("REGISTER ERROR:", error);
 
-    return res.status(500).json({
-      message: error.message,
-    });
+    return send(res, setErrmsg(RESPONSE.ERROR, error.message));
   }
 });
 

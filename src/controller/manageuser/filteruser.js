@@ -1,3 +1,5 @@
+import { send, setErrmsg } from "../../helper/responsehelper.js";
+import { RESPONSE } from "../../config/global.js";
 import { Router } from "express";
 import initusermodel from "../../model/user.js";
 
@@ -22,17 +24,13 @@ route.get("/", async (req, res) => {
     const data = await user.findAll({
       where: whereCondition,
     });
-
-    return res.json({
-      message: "Filtered data fetched successfully",
+    return send(res, RESPONSE.SUCCESS, {
       count: data.length,
       data: data,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: error.message,
-    });
+    return send(res, setErrmsg(RESPONSE.ERROR, error.message));
   }
 });
 

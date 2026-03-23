@@ -1,3 +1,5 @@
+import { send, setErrmsg } from "../../helper/responsehelper.js";
+import { RESPONSE } from "../../config/global.js";
 import { Router } from "express";
 import initusermodel from "../../model/user.js";
 
@@ -7,7 +9,7 @@ route.put("/:id", async (req, res) => {
   const id = req.params.id;
 
   if (!req.body) {
-    return res.status(400).send("Request body is missing");
+    return send(res, setErrmsg(RESPONSE.ERROR, "Request body is missing"));
   }
 
   const { name } = req.body;
@@ -18,12 +20,15 @@ route.put("/:id", async (req, res) => {
     const [updated] = await user.update({ name: name }, { where: { id: id } });
 
     if (updated) {
-      res.send("Users updated successfully");
+      return send(
+        res,
+        setErrmsg(RESPONSE.SUCCESS, "Users updated successfully"),
+      );
     } else {
-      res.status(404).send("Users not found");
+      return send(res, setErrmsg(RESPONSE.ERROR, "Users not found"));
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    return send(res, setErrmsg(RESPONSE.ERROR, error.message));
   }
 });
 

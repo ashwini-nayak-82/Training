@@ -16,9 +16,11 @@ router.get("/", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({
-      message: "Error",
-    });
+    return send(
+      res,
+      setErrmsg(RESPONSE.ERROR, message)
+    );
+     
   }
 });
 
