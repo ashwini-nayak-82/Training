@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     const User = await initUserModel();
 
     const user = await User.findOne({
-      where: { email },    
+      where: { email },
     });
 
     if (!user) {
@@ -39,7 +39,6 @@ router.post("/", async (req, res) => {
 
     return res.status(200).json({
       message: "Login successful",
-      data: user,
     });
   } catch (error) {
     console.error("LOGIN ERROR:", error);
