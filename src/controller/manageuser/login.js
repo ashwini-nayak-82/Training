@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     const User = await initUserModel();
 
     const user = await User.findOne({
-      where: { email },
+      where: { email },    
     });
 
     if (!user) {
