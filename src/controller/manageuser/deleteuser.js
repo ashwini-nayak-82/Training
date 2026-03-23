@@ -17,7 +17,7 @@ route.delete("/:id", async (req, res) => {
       return send(res, setErrmsg("User Not Found"));
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    return send(res, setErrmsg(RESPONSE.ERROR, error.message));
   }
 });
 
